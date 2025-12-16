@@ -67,4 +67,19 @@ userRouter.post("/login", async (req, res) => {
   }
 });
 
+userRouter.get("/", async (req, res) => {
+
+  try {
+    const allUsers = await UserModel.find();
+    const withoutPasswords = allUsers.map(user => {
+      const { password, ...userWithoutPassword } = user.toObject();
+      return userWithoutPassword;
+    });
+    res.status(200).json({ message: "All users fetched", users: withoutPasswords });
+    
+  } catch (error) {
+    res.status(500).json({ message: "server error", error: error.message });
+  }
+})
+
 module.exports = userRouter;

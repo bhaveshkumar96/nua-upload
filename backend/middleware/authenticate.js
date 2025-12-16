@@ -13,7 +13,6 @@ const authenticate = async (req, res, next) => {
     const token = authHeader.split(" ")[1];
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    console.log("decoded========", decoded);
 
     const user = await UserModel.findById(decoded._id);
 
@@ -21,10 +20,9 @@ const authenticate = async (req, res, next) => {
       return res.status(401).json({ message: "User not found" });
     }
 
-    req.user = user; // ✅ NOW req.user exists
+    req.user = user;
     next();
   } catch (err) {
-    log("Authentication error:", err);
     return res.status(401).json({ message: "Unauthorized access" });
   }
 };

@@ -4,6 +4,7 @@ const userRouter = require("./routes/user.route");
 const fileRouter = require("./routes/file.route");
 const authenticate = require("./middleware/authenticate");
 const express = require("express");
+const path = require("path");
 const cors = require("cors");
 require("dotenv").config();
 const app = express();
@@ -17,6 +18,10 @@ app.get("/", (req, res) => {
 // app.use(authenticate)
 app.use("/users", userRouter);
 app.use("/files", fileRouter);
+app.use(
+  "/uploads",
+  express.static(path.join(__dirname, "uploads"))
+);
 app.listen(process.env.PORT, async () => {
   try {
     await connection;

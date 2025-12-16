@@ -19,6 +19,30 @@ const sharedWithSchema = new mongoose.Schema(
   },
   { _id: false }
 );
+const activityLogSchema = new mongoose.Schema(
+  {
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+    action: {
+      type: String,
+      enum: ["view", "download", "share", "delete", "upload"],
+      required: true,
+    },
+    createdAt: {
+      type: Date,
+      default: Date.now,
+    },
+    expiresAt:{
+      type: Date,
+      default: null,
+    }
+  },
+  { _id: false }
+);
+
 const sharedLinkSchema = new mongoose.Schema(
   {
     token: {
@@ -27,7 +51,6 @@ const sharedLinkSchema = new mongoose.Schema(
     },
     expiresAt: {
       type: Date,
-      default: null,
     },
     createdAt: {
       type: Date,
@@ -64,11 +87,12 @@ const fileSchema = new mongoose.Schema({
     required: true,
   },
   sharedWith: [sharedWithSchema],
-  sharedLink: [sharedLinkSchema],
+  shareLink: [sharedLinkSchema],
+  activityLog:[activityLogSchema]
 
 }, { timestamps: true });
 
 fileSchema.index({ "sharedWith.user": 1 });
-fileSchema.index({ "sharedLink.token": 1 });
+fileSchema.index({ "shareLink.token": 1 });
 
 module.exports = mongoose.model("File", fileSchema);

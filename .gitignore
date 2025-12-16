@@ -1,0 +1,19 @@
+# Node modules (ignore everywhere)
+node_modules/
+**/node_modules/
+
+# Environment files (ignore everywhere)
+.env
+.env.*
+**/.env
+**/.env.*
+# Build outputs
+dist/
+build/
+
+# IDE / Editor
+.vscode/
+.idea/
+
+# Optional: uploads (if you don't want them in git)
+backend/uploads/
