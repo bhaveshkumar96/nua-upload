@@ -35,7 +35,7 @@ const Share = () => {
   const navigate = useNavigate();
 
   const BACKEND_URL =
-    process.env.REACT_APP_BACKEND_URL || "http://localhost:4000";
+    process.env.BACKEND_URL || "http://localhost:4000";
   const token = localStorage.getItem("user_token");
 
   const getUsers = async () => {
