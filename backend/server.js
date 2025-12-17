@@ -15,14 +15,8 @@ const allowedOrigins = [
   "https://nua-upload.onrender.com",
 ];
 
-app.use(
-  cors({
-    origin: allowedOrigins,
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-    credentials: true,
-  })
-);
+app.use(cors());
+
 
 app.options("*", cors());
 app.get("/", (req, res) => {
