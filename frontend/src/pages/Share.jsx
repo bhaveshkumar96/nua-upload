@@ -34,8 +34,8 @@ const Share = () => {
   const toast = useToast();
   const navigate = useNavigate();
 
-  const BACKEND_URL =
-    process.env.BACKEND_URL || "http://localhost:4000";
+  const BACKEND_URL = "https://nua-upload.onrender.com"
+    // process.env.BACKEND_URL || "http://localhost:4000";
   const token = localStorage.getItem("user_token");
 
   const getUsers = async () => {
@@ -112,8 +112,8 @@ const Share = () => {
 
   const getFiles = async () => {
     const token = localStorage.getItem("user_token");
-    const BACKEND_URL =
-      process.env.REACT_APP_BACKEND_URL || "http://localhost:4000";
+    const BACKEND_URL = "https://nua-upload.onrender.com"
+      // process.env.REACT_APP_BACKEND_URL || "http://localhost:4000";
 
     try {
       const { data } = await axios.get(`${BACKEND_URL}/files`, {
