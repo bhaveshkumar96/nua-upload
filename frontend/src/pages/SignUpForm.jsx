@@ -21,7 +21,7 @@ const SignUpForm = () => {
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:4000";
+  const BACKEND_URL = "https://nua-upload.onrender.com";
   const navigate = useNavigate();
   const handleTogglePassword = () => setShowPassword(!showPassword);
 
