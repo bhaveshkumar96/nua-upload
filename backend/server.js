@@ -10,8 +10,21 @@ require("dotenv").config();
 const app = express();
 
 app.use(express.json());
-app.use(cors());
+const allowedOrigins = [
+  "https://nua-upload.vercel.app",
+  "https://nua-upload.onrender.com",
+];
 
+app.use(
+  cors({
+    origin: allowedOrigins,
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true,
+  })
+);
+
+app.options("*", cors());
 app.get("/", (req, res) => {
   res.send("<h1>HomePage</h1>");
 });
