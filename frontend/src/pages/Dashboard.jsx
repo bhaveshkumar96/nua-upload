@@ -21,7 +21,7 @@ const Dashboard = () => {
   const handleDownload = async (file) => {
     const token = localStorage.getItem("user_token");
     const BACKEND_URL =
-      process.env.REACT_APP_BACKEND_URL || "http://localhost:4000";
+      process.env.BACKEND_URL || "http://localhost:4000";
 
     try {
       const { data } = await axios.get(
