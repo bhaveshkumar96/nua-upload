@@ -18,7 +18,6 @@ const allowedOrigins = [
 app.use(cors());
 
 
-app.options("*", cors());
 app.get("/", (req, res) => {
   res.send("<h1>HomePage</h1>");
 });
