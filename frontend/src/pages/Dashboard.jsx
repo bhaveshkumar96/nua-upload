@@ -20,8 +20,8 @@ const Dashboard = () => {
   const toast = useToast();
   const handleDownload = async (file) => {
     const token = localStorage.getItem("user_token");
-    const BACKEND_URL =
-      process.env.BACKEND_URL || "http://localhost:4000";
+    const BACKEND_URL = "https://nua-upload.onrender.com"
+      // process.env.BACKEND_URL || "http://localhost:4000";
 
     try {
       const { data } = await axios.get(
@@ -54,8 +54,8 @@ const Dashboard = () => {
   };
 const handleShare = async (file) => {
   const token = localStorage.getItem("user_token");
-  const BACKEND_URL =
-    process.env.REACT_APP_BACKEND_URL || "http://localhost:4000";
+  const BACKEND_URL = "https://nua-upload.onrender.com"
+    // process.env.REACT_APP_BACKEND_URL || "http://localhost:4000";
 
   // 24 hours expiry
   const expiresAt = new Date(
@@ -106,8 +106,8 @@ const handleShare = async (file) => {
 
   const getFiles = async () => {
     const token = localStorage.getItem("user_token");
-    const BACKEND_URL =
-      process.env.REACT_APP_BACKEND_URL || "http://localhost:4000";
+    const BACKEND_URL = "https://nua-upload.onrender.com"
+      // process.env.REACT_APP_BACKEND_URL || "http://localhost:4000";
 
     try {
       const { data } = await axios.get(`${BACKEND_URL}/files`, {
