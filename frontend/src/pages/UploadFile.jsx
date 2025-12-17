@@ -12,6 +12,7 @@ import {
 import axios from "axios";
 import { useToast } from "@chakra-ui/react";
 const UploadFile = () => {
+    const BACKEND_URL = "https://nua-upload.onrender.com"
   const [files, setFiles] = useState([]);
   const toast = useToast();
   const handleFileChange = (e) => {
@@ -36,8 +37,8 @@ const handleSubmit = async () => {
   });
 
   const token = localStorage.getItem("user_token");
-  const BACKEND_URL =
-    process.env.BACKEND_URL || "http://localhost:4000";
+
+    // process.env.BACKEND_URL || "http://localhost:4000";
 
   try {
     const response = await axios.post(
