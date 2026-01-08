@@ -39,22 +39,36 @@ fileRouter.get("/", authenticate, async (req, res) => {
   const user = req.user;
 
   try {
- 
-    const ownedFiles = await FileModel.find({ owner: user._id });
-
+    const ownedFiles = await FileModel.find({ owner: user._id })
+      .populate("owner", "name email")
+      .populate("sharedWith.user", "name email")
+      .populate("activityLog.userId", "name email");
 
     const sharedFiles = await FileModel.find({
-      "sharedWith.userId": user._id,
+      "sharedWith.user": user._id,
+    })
+      .populate("owner", "name email")
+      .populate("sharedWith.user", "name email")
+      .populate("activityLog.userId", "name email");
+
+    // Merge & remove duplicates (important)
+    const filesMap = new Map();
+    [...ownedFiles, ...sharedFiles].forEach(file => {
+      filesMap.set(file._id.toString(), file);
     });
 
- 
-    const files = [...ownedFiles, ...sharedFiles];
-
-    res.status(200).json({ message: "success", files });
+    res.status(200).json({
+      message: "success",
+      files: Array.from(filesMap.values()),
+    });
   } catch (error) {
-    res.status(500).json({ message: "server error", error: error.message });
+    res.status(500).json({
+      message: "server error",
+      error: error.message,
+    });
   }
 });
+
 
 fileRouter.get("/download/:id", authenticate, async (req, res) => {
   const { id } = req.params;
@@ -118,6 +132,15 @@ fileRouter.post("/:id/share/user", authenticate, async (req, res) => {
     if (!file) {
       return res.status(404).json({ message: "File not found" });
     }
+    const alreadyShared = file.sharedWith.some(
+      (u) => u.user.toString() === userId
+    );
+
+    if (alreadyShared) {
+      return res
+        .status(400)
+        .json({ message: "File already shared with this user" });
+    }
 
     // owner check
     if (file.owner.toString() !== req.user._id.toString()) {
@@ -141,48 +164,52 @@ fileRouter.post("/:id/share/user", authenticate, async (req, res) => {
   }
 });
 
-fileRouter.post("/:id/share/link", authenticate, async (req, res) => {
-  const { id } = req.params;
-  const { expiresAt } = req.body;
+// fileRouter.post("/:id/share/user", authenticate, async (req, res) => {
+//   const { id } = req.params;
+//   const { userId, role, expiresAt } = req.body;
 
-  try {
-    const file = await FileModel.findById(id);
-    if (!file) {
-      return res.status(404).json({ message: "File not found" });
-    }
+//   try {
+//     const file = await FileModel.findById(id);
+//     if (!file) {
+//       return res.status(404).json({ message: "File not found" });
+//     }
 
-    // owner check
-    if (file.owner.toString() !== req.user._id.toString()) {
-      return res.status(403).json({ message: "Only owner can create link" });
-    }
+//     if (file.owner.toString() !== req.user._id.toString()) {
+//       return res.status(403).json({ message: "Only owner can share file" });
+//     }
 
-    const token = crypto.randomBytes(32).toString("hex");
+//     const alreadyShared = file.sharedWith.some(
+//       (u) => u.user.toString() === userId
+//     );
+//     if (alreadyShared) {
+//       return res
+//         .status(400)
+//         .json({ message: "File already shared with this user" });
+//     }
 
-    file.shareLink.push({
-      token,
-      expiresAt: expiresAt ? new Date(expiresAt) : null,
-    });
-    file.activityLog.push({
-      action: "share",
-      userId: req.user._id,
-      createdAt: new Date(),
-      expiresAt: expiresAt ? new Date(expiresAt) : null,
-    });
-    await file.save();
+//     file.sharedWith.push({
+//       user: userId,
+//       role: role || "viewer",
+//       expiresAt: expiresAt ? new Date(expiresAt) : null,
+//     });
 
-    const shareUrl = `${process.env.BASE_URL}/files/download/${file._id}?token=${token}`;
+//     file.activityLog.push({
+//       userId: req.user._id,
+//       action: "share",
+//       expiresAt: expiresAt ? new Date(expiresAt) : null,
+//     });
 
-    return res.status(200).json({
-      message: "Share link created",
-      shareUrl,
-      expiresAt,
-    });
-  } catch (error) {
-    return res
-      .status(500)
-      .json({ message: "server error", error: error.message });
-  }
-});
+//     await file.save();
+
+//     return res.status(200).json({ message: "success", file });
+//   } catch (error) {
+//     return res.status(500).json({
+//       message: "server error",
+//       error: error.message,
+//     });
+//   }
+// });
+
 fileRouter.get("/view/:id", authenticate, async (req, res) => {
   const { id } = req.params;
   const { token } = req.query;
