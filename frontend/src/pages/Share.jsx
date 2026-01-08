@@ -28,14 +28,13 @@ import { useParams, useNavigate } from "react-router-dom";
 const Share = () => {
   const { fileId } = useParams();
   const [users, setUsers] = useState([]);
-  const [selectedUsers, setSelectedUsers] = useState({}); // { fileId: userId }
+  const [selectedUsers, setSelectedUsers] = useState({});
   const [loading, setLoading] = useState(false);
   const [files, setFiles] = useState([]);
   const toast = useToast();
   const navigate = useNavigate();
 
-  const BACKEND_URL = "https://nua-upload.onrender.com"
-    // process.env.BACKEND_URL || "http://localhost:4000";
+    const BACKEND_URL = "https://nua-upload.onrender.com";
   const token = localStorage.getItem("user_token");
 
   const getUsers = async () => {
@@ -57,6 +56,9 @@ const Share = () => {
       setLoading(false);
     }
   };
+  const currentUser = JSON.parse(localStorage.getItem("user"));
+
+  const isOwner = (file) => file.owner === currentUser?._id;
 
   const handleUserSelect = (fileId, userId) => {
     setSelectedUsers((prev) => ({
@@ -112,8 +114,6 @@ const Share = () => {
 
   const getFiles = async () => {
     const token = localStorage.getItem("user_token");
-    const BACKEND_URL = "https://nua-upload.onrender.com"
-      // process.env.REACT_APP_BACKEND_URL || "http://localhost:4000";
 
     try {
       const { data } = await axios.get(`${BACKEND_URL}/files`, {
@@ -135,6 +135,7 @@ const Share = () => {
     getUsers();
     getFiles();
   }, []);
+  console.log("selectedUsers", selectedUsers);
 
   return (
     <Box p="6" bg="white" rounded="md" shadow="sm">
@@ -146,8 +147,7 @@ const Share = () => {
         <Spinner />
       ) : (
         <TableContainer bg="white" rounded="md" shadow="sm">
-          <Heading>Dashboard</Heading>
-          <Table variant="simple">
+          <Table variant="simple" size={"sm"}>
             <Thead bg="gray.50">
               <Tr>
                 <Th>Filename</Th>
@@ -169,29 +169,44 @@ const Share = () => {
                     <Td isNumeric>{(file.size / 1024 / 1024).toFixed(2)} MB</Td>
                     <Td>{new Date(file.createdAt).toLocaleDateString()}</Td>
                     <Td>
-                      <FormControl>
-                        <FormLabel>Select User</FormLabel>
-                        <Select
+                      <Box>
+                        <FormControl>
+                          <FormLabel fontSize="sm">Select user</FormLabel>
+                          <Select
+                            size="sm"
+                            placeholder="Select user"
+                            value={selectedUsers[file._id] || ""}
+                            onChange={(e) =>
+                              handleUserSelect(file._id, e.target.value)
+                            }
+                          >
+                            {users
+                              .filter((u) => u._id !== currentUser?._id) // optional safety
+                              .map((user) => (
+                                <option key={user._id} value={user._id}>
+                                  {user.email}
+                                </option>
+                              ))}
+                          </Select>
+                        </FormControl>
+
+                        {/* <Button
+                          mt="2"
                           size="sm"
-                          placeholder="Select a user"
-                          value={selectedUsers[file._id] || ""} // single userId
-                          onChange={(e) =>
-                            handleUserSelect(file._id, e.target.value)
-                          }
+                          colorScheme="purple"
+                          isDisabled={!selectedUsers[file._id]}
+                          onClick={() => handleShare(file)}
                         >
-                          {users.map((user) => (
-                            <option key={user._id} value={user._id}>
-                              {user.email}
-                            </option>
-                          ))}
-                        </Select>
-                      </FormControl>
+                          Share
+                        </Button> */}
+                      </Box>
                     </Td>
 
                     <Td>
                       <Button
                         size="sm"
                         colorScheme="purple"
+                         isDisabled={!selectedUsers[file._id]}
                         onClick={() => handleShare(file)}
                       >
                         Share
@@ -210,15 +225,6 @@ const Share = () => {
           </Table>
         </TableContainer>
       )}
-
-      <Button
-        mt="4"
-        colorScheme="purple"
-        onClick={handleShare}
-        isDisabled={!selectedUsers.length}
-      >
-        Share with Selected Users
-      </Button>
     </Box>
   );
 };

@@ -53,13 +53,15 @@ fileRouter.get("/", authenticate, async (req, res) => {
 
     // Merge & remove duplicates (important)
     const filesMap = new Map();
-    [...ownedFiles, ...sharedFiles].forEach(file => {
+    [...ownedFiles, ...sharedFiles].forEach((file) => {
       filesMap.set(file._id.toString(), file);
     });
-
+    const sortedFiles = Array.from(filesMap.values()).sort(
+      (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+    );
     res.status(200).json({
       message: "success",
-      files: Array.from(filesMap.values()),
+      files: sortedFiles,
     });
   } catch (error) {
     res.status(500).json({
@@ -68,7 +70,6 @@ fileRouter.get("/", authenticate, async (req, res) => {
     });
   }
 });
-
 
 fileRouter.get("/download/:id", authenticate, async (req, res) => {
   const { id } = req.params;

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Box, Flex, Button, Text, HStack } from "@chakra-ui/react";
 import { useNavigate, useLocation } from "react-router-dom";
 
@@ -14,19 +14,25 @@ const Navbar = () => {
   ];
   const handleClick = (path) => {
     if (path === "/logout") {
-      localStorage.removeItem("user_token");
+      localStorage.removeItem("user");
     }
     navigate(path);
   };
+      const currentUserId = JSON.parse(localStorage.getItem("user"));
+  useEffect(() => {
+   
+  }, [currentUserId]);
+
   return (
     <Box bg="purple.600" px="6" py="3">
       <Flex align="center" justify="space-between">
         {/* Logo / Title */}
         <Text color="white" fontSize="lg" fontWeight="bold">
-          File Manager
+          File Manager 
         </Text>
 
         {/* Nav Links */}
+        <HStack> <Text color="white" fontSize="x-large" > <i>{currentUserId && (currentUserId?.name).toUpperCase()}</i> </Text> </HStack>
         <HStack spacing="4">
           {navItems.map((item) => (
             <Button

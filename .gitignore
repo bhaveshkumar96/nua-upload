@@ -14,6 +14,3 @@ build/
 # IDE / Editor
 .vscode/
 .idea/
-
-# Optional: uploads (if you don't want them in git)
-backend/uploads/

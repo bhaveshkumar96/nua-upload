@@ -37,6 +37,7 @@ const SignInForm = () => {
 
       if (data.token) {
         localStorage.setItem("user_token", data.token);
+        localStorage.setItem("user", JSON.stringify(data.user));
         toast({
           title: "Success",
           description: "Login successful",

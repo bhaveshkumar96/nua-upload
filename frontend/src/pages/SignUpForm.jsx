@@ -11,6 +11,7 @@ import {
   InputRightElement,
   Button,
   Checkbox,
+  useToast,
 } from "@chakra-ui/react";
 import { RiEyeCloseLine } from "react-icons/ri";
 import { MdOutlineRemoveRedEye } from "react-icons/md";
@@ -21,9 +22,10 @@ const SignUpForm = () => {
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const BACKEND_URL = "https://nua-upload.onrender.com";
+     const BACKEND_URL = "https://nua-upload.onrender.com";
   const navigate = useNavigate();
   const handleTogglePassword = () => setShowPassword(!showPassword);
+  const toast = useToast();
 
   const handleLogin = async () => {
     console.log("Email:", email, "Password:", password, "Name:", name);
@@ -37,7 +39,20 @@ const SignUpForm = () => {
         }
       );
       console.log("Registration successful:", data);
-      navigate("/signin");
+      
+      localStorage.setItem("user_token", data.token);
+      // localStorage.setItem("user", JSON.stringify(data.user));
+      toast({
+          title: "Success",
+          description: "Registration successful",
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
+        setTimeout(() => {
+          navigate("/signin");
+        }, 1200);
+      // navigate("/");
     } catch (error) {
         console.error("Registration failed:", error.response.data);
     }

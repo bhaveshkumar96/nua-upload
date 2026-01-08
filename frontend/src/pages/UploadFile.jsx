@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { use, useState } from "react";
 import {
   Box,
   Button,
@@ -11,10 +11,12 @@ import {
 } from "@chakra-ui/react";
 import axios from "axios";
 import { useToast } from "@chakra-ui/react";
+import { useNavigate } from "react-router-dom";
 const UploadFile = () => {
     const BACKEND_URL = "https://nua-upload.onrender.com"
   const [files, setFiles] = useState([]);
   const toast = useToast();
+  const navigate = useNavigate();
   const handleFileChange = (e) => {
     setFiles(Array.from(e.target.files));
   };
@@ -37,8 +39,6 @@ const handleSubmit = async () => {
   });
 
   const token = localStorage.getItem("user_token");
-
-    // process.env.BACKEND_URL || "http://localhost:4000";
 
   try {
     const response = await axios.post(
@@ -65,7 +65,9 @@ const handleSubmit = async () => {
       isClosable: true,
     });
 
-    // clear files after success
+    setTimeout(() => {
+      navigate("/");
+    }, 1000);
     setFiles([]);
 
   } catch (error) {
