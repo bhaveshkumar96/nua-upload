@@ -15,36 +15,45 @@ const Navbar = () => {
   const handleClick = (path) => {
     if (path === "/logout") {
       localStorage.removeItem("user");
+      localStorage.removeItem("user_token");
     }
     navigate(path);
   };
-      const currentUserId = JSON.parse(localStorage.getItem("user"));
-  useEffect(() => {
-   
-  }, [currentUserId]);
+  const currentUserId = JSON.parse(localStorage.getItem("user"));
+  useEffect(() => {}, [currentUserId]);
 
   return (
     <Box bg="purple.600" px="6" py="3">
       <Flex align="center" justify="space-between">
         {/* Logo / Title */}
         <Text color="white" fontSize="lg" fontWeight="bold">
-          File Manager 
+          File Manager
         </Text>
 
         {/* Nav Links */}
-        <HStack> <Text color="white" fontSize="x-large" > <i>{currentUserId && (currentUserId?.name).toUpperCase()}</i> </Text> </HStack>
+        <HStack>
+          {" "}
+          <Text color="white" fontSize="x-large">
+            {" "}
+            <i>{currentUserId && (currentUserId?.name).toUpperCase()}</i>{" "}
+          </Text>{" "}
+        </HStack>
         <HStack spacing="4">
-          {navItems.map((item) => (
-            <Button
-              key={item.path}
-              variant={location.pathname === item.path ? "solid" : "ghost"}
-              colorScheme="whiteAlpha"
-              color="white"
-              onClick={() => handleClick(item.path)}
-            >
-              {item.label}
-            </Button>
-          ))}
+          {navItems.map((item) => {
+            if (item.path === "/logout" && !currentUserId) return null;
+
+            return (
+              <Button
+                key={item.path}
+                variant={location.pathname === item.path ? "solid" : "ghost"}
+                colorScheme="whiteAlpha"
+                color="white"
+                onClick={() => handleClick(item.path)}
+              >
+                {item.label}
+              </Button>
+            );
+          })}
         </HStack>
       </Flex>
     </Box>

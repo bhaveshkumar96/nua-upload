@@ -15,7 +15,7 @@ import {
 } from "@chakra-ui/react";
 import { RiEyeCloseLine } from "react-icons/ri";
 import { MdOutlineRemoveRedEye } from "react-icons/md";
-import { useNavigate,Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 const SignInForm = () => {
   const [email, setEmail] = useState("");
@@ -112,13 +112,18 @@ const SignInForm = () => {
           Sign In
         </Button>
         <Text textAlign="center" mt="3" fontSize="sm">
-  Don't have an account?{" "}
-  <Link to="/signup">
-    <Text as="span" color="purple.500" fontWeight="bold" cursor="pointer">
-      Sign up
-    </Text>
-  </Link>
-</Text>
+          Don't have an account?{" "}
+          <Link to="/signup">
+            <Text
+              as="span"
+              color="purple.500"
+              fontWeight="bold"
+              cursor="pointer"
+            >
+              Sign up
+            </Text>
+          </Link>
+        </Text>
       </Box>
     </Flex>
   );
